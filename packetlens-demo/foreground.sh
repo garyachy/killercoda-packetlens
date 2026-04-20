@@ -3,8 +3,8 @@
 set -euo pipefail
 
 echo ">>> Pulling PacketLens demo images..."
-docker pull ghcr.io/garyachy/vpp-ndpi:latest
-docker pull ghcr.io/garyachy/vpp-ndpi-exporter:latest &
+docker pull ghcr.io/packetlens/vpp-ndpi:latest
+docker pull ghcr.io/packetlens/vpp-ndpi-exporter:latest &
 docker pull prom/prometheus:v2.51.2 &
 docker pull grafana/grafana:10.4.2 &
 wait
@@ -13,7 +13,7 @@ echo ">>> All images pulled"
 # Extract labs configs bundled inside the demo image (at /src/labs/)
 echo ">>> Extracting Prometheus + Grafana configs from demo image..."
 mkdir -p /root/labs
-docker create --name extract-tmp ghcr.io/garyachy/vpp-ndpi:latest sh
+docker create --name extract-tmp ghcr.io/packetlens/vpp-ndpi:latest sh
 docker cp extract-tmp:/src/labs/. /root/labs/
 docker rm extract-tmp
 
@@ -21,7 +21,7 @@ docker rm extract-tmp
 cat > /root/compose.demo.yaml << 'COMPOSE'
 services:
   vpp:
-    image: ghcr.io/garyachy/vpp-ndpi:latest
+    image: ghcr.io/packetlens/vpp-ndpi:latest
     container_name: packetlens-vpp
     privileged: true
     volumes:
@@ -35,7 +35,7 @@ services:
       start_period: 15s
 
   vpp-exporter:
-    image: ghcr.io/garyachy/vpp-ndpi-exporter:latest
+    image: ghcr.io/packetlens/vpp-ndpi-exporter:latest
     container_name: packetlens-exporter
     command: ["--stats-socket=/run/vpp/stats.sock", "--listen=:9197"]
     volumes:
