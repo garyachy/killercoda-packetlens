@@ -13,10 +13,9 @@ echo ">>> All images pulled"
 # Extract labs configs bundled inside the demo image (at /src/labs/)
 echo ">>> Extracting Prometheus + Grafana configs from demo image..."
 mkdir -p /root/labs
-docker create --name _extract ghcr.io/garyachy/vpp-ndpi:latest sh
-docker cp _extract:/src/labs/prometheus  /root/labs/prometheus
-docker cp _extract:/src/labs/grafana     /root/labs/grafana
-docker rm _extract
+docker create --name extract-tmp ghcr.io/garyachy/vpp-ndpi:latest sh
+docker cp extract-tmp:/src/labs/. /root/labs/
+docker rm extract-tmp
 
 # Write the Compose file using pre-built images
 cat > /root/compose.demo.yaml << 'COMPOSE'
